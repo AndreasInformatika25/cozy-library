@@ -22,7 +22,6 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            // Tambahkan |unique:nama_tabel,nama_kolom
             'nama_kategori' => 'required|min:3|unique:categories,nama_kategori'
         ]);
         

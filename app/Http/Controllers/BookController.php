@@ -69,8 +69,6 @@ class BookController extends Controller
 
     /**
      * Menampilkan form edit data buku.
-     * Karena form edit menggunakan Modal di halaman index, kita me-redirect
-     * atau memuat ulang halaman index beserta data buku yang akan diedit.
      */
     public function edit(string $id)
     {
@@ -103,7 +101,7 @@ class BookController extends Controller
 
         $book = Book::findOrFail($id);
 
-        // Jika user mengupload cover baru
+        // Jika admin mengupload cover baru
         if ($request->hasFile('cover')) {
             // Hapus cover lama dari storage jika ada
             if ($book->cover) {

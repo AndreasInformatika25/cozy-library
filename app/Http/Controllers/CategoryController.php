@@ -32,7 +32,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Menampilkan form edit kategori (berupa modal di halaman index).
+     * Menampilkan form edit kategori.
      */
     public function edit(string $id)
     {

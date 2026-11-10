@@ -18,13 +18,11 @@ class Borrow extends Model
         'status',
     ];
 
-    // Artinya: 1 Data Peminjaman ini milik 1 User
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Artinya: 1 Data Peminjaman ini meminjam 1 Buku
     public function book()
     {
         return $this->belongsTo(Book::class);

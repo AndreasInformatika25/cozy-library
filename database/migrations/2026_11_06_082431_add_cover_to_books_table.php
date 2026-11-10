@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('books', function (Blueprint $table) {
+            // Nambahin kolom cover setelah tahun_terbit, boleh kosong (nullable)
+            $table->string('cover')->nullable()->after('tahun_terbit');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('books', function (Blueprint $table) {
+            $table->dropColumn('cover');
+        });
+    }
+};

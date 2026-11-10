@@ -46,7 +46,7 @@ Gunakan kredensial berikut untuk masuk sebagai Super Admin (berdasarkan seeder):
 
 ## 📎 Tautan Penting
 
-- **Video Presentasi (YouTube):** [Link Video YouTube Kamu]
-- **Dokumentasi Proyek (PDF):** Terdapat pada file `Projek_UTS_[NamaKelompok].pdf` di dalam repository ini.
+- **Video Presentasi (YouTube):**
+- **Dokumentasi Proyek (PDF):** Terdapat pada file  di dalam repository ini.
 
 _Dibuat untuk memenuhi tugas UTS Pemrograman Web Tingkat Mahir._

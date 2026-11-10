@@ -14,6 +14,7 @@ class Borrow extends Model
         'book_id',
         'tanggal_pinjam',
         'tanggal_kembali',
+        'tanggal_dikembalikan',
         'status',
     ];
 

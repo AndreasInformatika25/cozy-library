@@ -6,7 +6,6 @@
 <style>
     /* CSS Khusus Halaman Riwayat */
     .page-title {
-        font-family: 'Playfair Display', serif;
         font-size: clamp(26px, 4vw, 36px);
         color: var(--text-dark);
         margin-bottom: 24px;
@@ -50,8 +49,12 @@
 
 @section('content')
     <div class="page-wrap">
+        <div class="mt-4">
+            <a href="{{ url('/') }}" class="text-decoration-none fw-medium" style="color: var(--brand);">
+                <i class="fas fa-arrow-left me-1"></i> Kembali ke Beranda
+            </a>
+        </div>
         <h1 class="page-title mt-4">Riwayat Peminjaman</h1>
-        
         <div class="card-custom">
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -60,11 +63,25 @@
                             <th>Buku</th>
                             <th>Tgl Pinjam</th>
                             <th>Tenggat Kembali</th>
-                            <th>Status</th>
+                            <th>Tgl Dikembalikan</th>
+                            <th>Status & Denda</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($riwayat as $item)
+                            @php
+                                // Logika Hitung Denda untuk User
+                                $denda = 0;
+                                $telat = 0;
+                                if ($item->status == 'dikembalikan' && $item->tanggal_dikembalikan) {
+                                    $tenggat = \Carbon\Carbon::parse($item->tanggal_kembali);
+                                    $aktual = \Carbon\Carbon::parse($item->tanggal_dikembalikan);
+                                    if ($aktual->greaterThan($tenggat)) {
+                                        $telat = $aktual->diffInDays($tenggat);
+                                        $denda = $telat * 1000; 
+                                    }
+                                }
+                            @endphp
                             <tr>
                                 <td>
                                     <strong class="d-block text-dark">{{ $item->book->judul ?? 'Buku Dihapus' }}</strong>
@@ -73,30 +90,29 @@
                                 <td>{{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($item->tanggal_kembali)->format('d M Y') }}</td>
                                 <td>
+                                    @if($item->tanggal_dikembalikan)
+                                        <span class="text-success fw-medium">{{ \Carbon\Carbon::parse($item->tanggal_dikembalikan)->format('d M Y') }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td>
                                     @if($item->status == 'dipinjam')
                                         <span class="badge badge-dipinjam rounded-pill px-3 py-2">Sedang Dipinjam</span>
                                     @else
                                         <span class="badge badge-selesai rounded-pill px-3 py-2">Dikembalikan</span>
+                                        @if($telat > 0)
+                                            <div class="small text-danger fw-bold mt-1">Telat {{ $telat }} hari<br>Denda: Rp {{ number_format($denda, 0, ',', '.') }}</div>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="4" class="text-center text-muted py-5">
-                                    <i class="fas fa-book-open fa-3x mb-3 text-black-50"></i><br>
-                                    Belum ada riwayat peminjaman.
-                                </td>
-                            </tr>
+                            <!-- Kosongkan -->
                         @endforelse
                     </tbody>
                 </table>
             </div>
-        </div>
-        
-        <div class="mt-4">
-            <a href="{{ url('/') }}" class="text-decoration-none fw-medium" style="color: var(--brand);">
-                <i class="fas fa-arrow-left me-1"></i> Kembali ke Beranda
-            </a>
         </div>
     </div>
 @endsection

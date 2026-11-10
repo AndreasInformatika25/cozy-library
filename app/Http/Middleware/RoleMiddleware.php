@@ -5,20 +5,20 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth; // Wajib ditambahin
+use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
 {
-    // Tambahin parameter $role di sini
-    public function handle(Request $request, Closure $next, $role): Response
+    // Ubah parameter $role jadi ...$roles (spread operator)
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
         // 1. Cek apakah user udah login
-        // 2. Cek apakah role user sama dengan $role yang diminta (misal: 'admin')
-        if (Auth::check() && Auth::user()->role == $role) {
-            return $next($request); // Boleh lewat
+        // 2. Pakai in_array untuk ngecek apakah role user ada di dalam daftar $roles yang dibolehin
+        if (Auth::check() && in_array(Auth::user()->role, $roles)) {
+            return $next($request); // Akses diizinkan, lanjut bos!
         }
 
-        // Kalau bukan admin, lempar error 403 (Forbidden / Dilarang Akses)
-        abort(403, 'Maaf, cuma Admin yang boleh ngakses halaman ini.');
+        // Kalau role nggak cocok, lempar error 403
+        abort(403, 'Maaf, kamu tidak memiliki hak akses ke halaman ini.');
     }
 }

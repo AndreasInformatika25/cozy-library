@@ -93,6 +93,66 @@
         .btn-action.edit:hover { background: #0d6efd; color: #fff; border-color: #0d6efd; }
         .btn-action.delete { color: #dc3545; }
         .btn-action.delete:hover { background: #dc3545; color: #fff; border-color: #dc3545; }
+
+        /* --- CUSTOM PAGINATION DATATABLES (BOOTSTRAP 5) --- */
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .pagination {
+            margin-bottom: 0;
+            gap: 4px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .page-link {
+            border-radius: 8px !important;
+            border: 1px solid var(--border) !important;
+            color: var(--text-dark) !important;
+            background-color: #fff !important;
+            font-size: 14px;
+            padding: 8px 14px;
+            transition: all 0.2s ease;
+            box-shadow: none !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .page-link:hover {
+            background-color: var(--brand-soft-2) !important;
+            color: var(--brand) !important;
+            border-color: var(--brand) !important;
+            z-index: 1;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+            background-color: var(--brand) !important;
+            border-color: var(--brand) !important;
+            color: #fff !important;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+            background-color: #f9f9f9 !important;
+            color: #bbb !important;
+            border-color: var(--border) !important;
+            cursor: not-allowed;
+        }
+
+        /* --- CUSTOM TOMBOL SIMPAN --- */
+        .btn-brand {
+            padding:12px 24px !important;
+            font-size: 16px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 8px;
+            transition: none !important;
+        }
+        .btn-brand:hover {
+            transform: none !important;
+            background-color: var(--brand-hover) !important;
+        }
     </style>
 @endpush
 
@@ -165,13 +225,10 @@
                                 <a href="{{ route('book.edit', ['id'=>$item->id]) }}" class="btn-action edit" title="Edit">
                                     <i class="fas fa-edit" style="font-size: 12px;"></i>
                                 </a>
-                                <form action="{{ route('book.delete',['id'=>$item->id]) }}" method="post" class="m-0" onsubmit="return confirm('Yakin mau hapus buku ini?')">
-                                    @csrf
-                                    @method('delete')
-                                    <button type="submit" class="btn-action delete" title="Hapus">
-                                        <i class="fas fa-trash-alt" style="font-size: 12px;"></i>
-                                    </button>
-                                </form>
+                                <!-- Tombol Hapus (Pemicu Modal) -->
+                                <button type="button" class="btn-action delete" data-bs-toggle="modal" data-bs-target="#hapusModal{{ $item->id }}" title="Hapus">
+                                    <i class="fas fa-trash-alt" style="font-size: 12px;"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -240,6 +297,32 @@
             </div>
         </form>
     </div>
+
+    <!-- ============================================== -->
+    <!-- MODALS KONFIRMASI HAPUS BUKU -->
+    <!-- ============================================== -->
+    @foreach ($book as $item)
+        <div class="modal fade" id="hapusModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content" style="border-radius: 16px; border: none;">
+                    <div class="modal-body text-center p-4">
+                        <div class="mb-3 text-danger">
+                            <i class="fas fa-exclamation-circle fa-3x"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Hapus Buku?</h5>
+                        <p class="text-muted small mb-4">Apakah kamu yakin ingin menghapus buku <strong>"{{ $item->judul }}"</strong>? Data yang dihapus tidak bisa dikembalikan.</p>
+                        
+                        <form action="{{ route('book.delete', ['id' => $item->id]) }}" method="post" class="d-flex gap-2 justify-content-center">
+                            @csrf
+                            @method('delete')
+                            <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-danger px-4">Ya, Hapus!</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection
 
 @push('scripts')

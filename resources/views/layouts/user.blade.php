@@ -96,6 +96,48 @@
             border-top: 3px solid var(--brand);
             opacity: 1;
         }
+
+        .dropdown-menu {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+        }
+
+        .dropdown-item:hover, 
+        .dropdown-item:focus {
+            background-color: var(--brand-soft-2, #faf6f0) !important;
+            color: var(--brand) !important;
+        }
+
+        .dropdown-item.text-danger:hover {
+            background-color: #fce4d6 !important;
+            color: #dc3545 !important;
+        }
+
+        .btn-custom:focus,
+        .btn-custom:active,
+        .navbar-toggler:focus,
+        .navbar-toggler:active {
+            box-shadow: none !important;
+            outline: none !important;
+            border-color: var(--brand) !important;
+        }
+
+        /* Posisi Dropdown di Mobile */
+        @media (max-width: 991.98px) {
+                padding-top: 15px;
+            }
+            
+            .navbar-nav.ms-auto {
+                align-items: flex-end;
+            }
+            
+            .dropdown-menu-end {
+                right: 0 !important;
+                left: auto !important;
+                min-width: 220px;
+            }
+        }
     </style>
     @stack('styles')
 </head>
@@ -115,9 +157,10 @@
                 <div class="d-flex align-items-center gap-3 py-3 py-lg-0 ms-auto">
                     @auth
                         <div class="dropdown">
-                            <button class="btn btn-custom rounded-3 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                            <button class="btn btn-custom rounded-3 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span>{{ Auth::user()->name }}</span>
                             </button>
+                            <!-- Pastikan ada class dropdown-menu-end -->
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
                                 @if(Auth::user()->role === 'pekerja' || Auth::user()->role === 'admin')
                                     <li>

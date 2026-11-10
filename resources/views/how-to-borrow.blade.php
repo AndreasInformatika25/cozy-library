@@ -63,7 +63,7 @@
                         <li>Durasi peminjaman maksimal adalah <strong>7 hari</strong> sejak tanggal pinjam.</li>
                         <li>Buku yang sama tidak dapat dipinjam dua kali oleh user yang sama sebelum dikembalikan.</li>
                         <li>Jika stok buku menunjukkan angka <strong>0</strong>, berarti buku sedang tidak tersedia.</li>
-                        <li>Pastikan kamu mengembalikan buku tepat waktu agar tidak terkena sanksi/denda.</li>
+                        <li>Pastikan kamu mengembalikan buku tepat waktu agar tidak terkena denda.</li>
                     </ul>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                         </h2>
                         <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body text-muted">
-                                Saat ini pengembalian buku dilakukan secara langsung dengan menyerahkan buku ke pustakawan (Admin/Pekerja) di perpustakaan.
+                                Saat ini pengembalian buku dilakukan secara langsung dengan menyerahkan buku ke pustakawan di perpustakaan.
                             </div>
                         </div>
                     </div>

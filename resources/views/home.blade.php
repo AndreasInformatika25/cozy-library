@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookly - Sewa Buku Digital</title>
+    <title>こーじー Library</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -248,6 +248,17 @@
         #sortBooks:focus {
             border-color: var(--brand);
             box-shadow: 0 0 0 3px rgba(196, 154, 128, 0.2);
+        }
+
+        .dropdown-item:hover, 
+        .dropdown-item:focus {
+            background-color: var(--brand-soft-2, #faf6f0) !important;
+            color: var(--brand) !important;
+        }
+
+        .dropdown-item.text-danger:hover {
+            background-color: #fce4d6 !important;
+            color: #dc3545 !important;
         }
     </style>
 </head>

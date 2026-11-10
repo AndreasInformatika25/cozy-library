@@ -20,7 +20,7 @@ class BorrowController extends Controller
         $borrows = Borrow::with(['user', 'book'])->latest()->get();
         
         // Ambil user dengan role member untuk dropdown form
-        $members = User::where('role', 'member')->get();
+        $members = User::whereIn('role', ['member', 'pekerja'])->get();
         
         // Ambil semua buku untuk dropdown form
         $books = Book::all();
@@ -31,21 +31,32 @@ class BorrowController extends Controller
     /**
      * Mencatat peminjaman manual oleh Admin/Pekerja.
      */
-    public function store(Request $request)
+        public function store(Request $request)
     {
+        // 1. Validasi hanya untuk user dan buku
         $validated = $request->validate([
-            'user_id'         => 'required|exists:users,id',
-            'book_id'         => 'required|exists:books,id',
-            'tanggal_pinjam'  => 'required|date',
-            'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
+            'user_id' => 'required|exists:users,id',
+            'book_id' => 'required|exists:books,id',
         ]);
 
-        // Set status default
+        // 2. Otomatis set tanggal pinjam (hari ini) dan tenggat (7 hari ke depan)
+        $validated['tanggal_pinjam'] = Carbon::now()->format('Y-m-d');
+        $validated['tanggal_kembali'] = Carbon::now()->addDays(7)->format('Y-m-d');
         $validated['status'] = 'dipinjam';
         
+        // 3. Cek stok buku sebelum dipinjam
+        $book = Book::findOrFail($request->book_id);
+        if ($book->stok < 1) {
+            return back()->withErrors(['Mohon maaf, stok buku ini sedang kosong / habis dipinjam.']);
+        }
+
+        // 4. Simpan transaksi
         Borrow::create($validated);
         
-        return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil dicatat!');
+        // 5. Kurangi stok buku
+        $book->decrement('stok');
+        
+        return redirect()->route('borrow.index')->with('success', 'Data peminjaman berhasil dicatat! Stok buku telah dikurangi.');
     }
 
     /**
@@ -55,10 +66,11 @@ class BorrowController extends Controller
     {
         $borrow = Borrow::findOrFail($id);
         
-        // Ubah status
-        $borrow->update(['status' => 'dikembalikan']);
+        $borrow->update([
+            'status' => 'dikembalikan',
+            'tanggal_dikembalikan' => Carbon::now()->format('Y-m-d')
+        ]);
         
-        // Kembalikan stok buku
         $borrow->book->increment('stok');
 
         return redirect()->route('borrow.index')->with('success', 'Buku berhasil dikembalikan dan stok telah di-update!');

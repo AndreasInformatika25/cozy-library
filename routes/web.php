@@ -81,7 +81,6 @@ Route::middleware(['auth', 'role:pekerja,admin'])->group(function () {
 
         $latestBooks = Book::latest()->take(3)->get();
         
-        // (Opsional) Jika kamu ingin recent activity user terbaru, gunakan variabel terpisah
         // $recentUsers = User::latest()->take(4)->get();
 
         return view('admin.dashboard', compact(
@@ -95,6 +94,7 @@ Route::middleware(['auth', 'role:pekerja,admin'])->group(function () {
     Route::post('/buku', [BookController::class, 'store'])->name('book.store');
     Route::get('/buku/{id}/edit', [BookController::class, 'edit'])->name('book.edit');
     Route::put('/buku/{id}/edit', [BookController::class, 'update'])->name('book.update');
+    Route::delete('/buku/{id}/delete', [BookController::class, 'destroy'])->name('book.delete');
 
     // Manajemen Kategori
     Route::get('/kategori', [CategoryController::class, 'index'])->name('category.index');
@@ -121,9 +121,6 @@ Route::middleware(['auth', 'role:pekerja,admin'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    // HANYA ADMIN yang bisa menghapus Buku
-    Route::delete('/buku/{id}/delete', [BookController::class, 'destroy'])->name('book.delete');
-
     // HANYA ADMIN yang bisa menghapus Anggota
     Route::delete('/anggota/{id}/delete', [MemberController::class, 'destroy'])->name('member.delete');
 });

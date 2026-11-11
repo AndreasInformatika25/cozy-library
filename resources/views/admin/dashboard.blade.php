@@ -254,23 +254,24 @@
 
     <!-- Panels -->
     <section class="panels">
+        <!-- 1. PANEL PEMINJAMAN -->
         <div class="panel">
             <div class="panel-head">
-                <h2>Recent Activity</h2>
+                <h2>Recent Borrows</h2>
                 <a href="{{ route('borrow.index') }}" class="view-all">View all <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             </div>
             
-            @forelse($recentActivities as $activity)
+            @forelse($recentBorrows as $activity)
                 <div class="activity">
                     <div class="icon">
-                        @if($activity->status == 'returned')
+                        @if($activity->status == 'dikembalikan')
                             <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16M3 12a9 9 0 0 1 15.5-6.2L21 8M3 21v-5h5M21 3v5h-5"/></svg>
                         @else
                             <svg viewBox="0 0 24 24"><path d="M2 5.5S5 4 8 4s4 1 4 1 1-1 4-1 6 1.5 6 1.5V19s-3-1.5-6-1.5-4 1-4 1-1-1-4-1-6 1.5-6 1.5z"/><path d="M12 5v13.5"/></svg>
                         @endif
                     </div>
                     <div class="info">
-                        <b>{{ $activity->status == 'returned' ? 'Book returned' : 'Book borrowed' }}</b>
+                        <b>{{ $activity->status == 'dikembalikan' ? 'Book returned' : 'Book borrowed' }}</b>
                         <span>{{ $activity->book->judul ?? 'Buku dihapus' }} oleh {{ $activity->user->name ?? 'User' }}</span>
                     </div>
                     <time>{{ $activity->created_at->diffForHumans() }}</time>
@@ -280,6 +281,7 @@
             @endforelse
         </div>
         
+        <!-- 2. PANEL BUKU TERBARU -->
         <div class="panel">
             <div class="panel-head">
                 <h2>Buku Terbaru</h2>
@@ -302,24 +304,22 @@
             </div>
         </div>
         
-        <!-- Recent Activity (User Terbaru) -->
+        <!-- 3. PANEL USER TERBARU -->
         <div class="panel">
             <div class="panel-head">
-                <h2>Recent Activity</h2>
+                <h2>New Members</h2>
                 <a href="{{ route('member.index') }}" class="view-all">View all <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             </div>
             
-            @forelse($recentActivities as $user)
+            @forelse($recentUsers as $user)
                 <div class="activity">
                     <div class="icon">
-                        {{-- Ikon User --}}
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
                     </div>
                     <div class="info">
                         <b>New user registered</b>
                         <span>{{ $user->name }}</span>
                     </div>
-                    {{-- Menampilkan waktu daftar, misal: "2 hours ago" --}}
                     <time>{{ $user->created_at->diffForHumans() }}</time>
                 </div>
             @empty

@@ -71,23 +71,25 @@ Route::middleware(['auth', 'role:pekerja,admin'])->group(function () {
         $totalUsers = User::count();
         $totalBorrowings = Borrow::count();
         $borrowThisMonth = Borrow::whereMonth('created_at', now()->month)
-                                 ->whereYear('created_at', now()->year)
-                                 ->count();
+                                ->whereYear('created_at', now()->year)
+                                ->count();
 
-        $recentActivities = Borrow::with(['user', 'book'])
-                                  ->latest()
-                                  ->take(4)
-                                  ->get();
+        // 1. Ambil data peminjaman terbaru (Pisahkan variabelnya)
+        $recentBorrows = Borrow::with(['user', 'book'])
+                            ->latest()
+                            ->take(4)
+                            ->get();
+
+        // 2. Ambil data user terbaru (Pisahkan variabelnya)
+        $recentUsers = User::latest()->take(4)->get();
 
         $latestBooks = Book::latest()->take(3)->get();
-        
-        // $recentUsers = User::latest()->take(4)->get();
 
         return view('admin.dashboard', compact(
             'totalBooks', 'totalUsers', 'totalBorrowings', 'borrowThisMonth',
-            'recentActivities', 'latestBooks'
+            'recentBorrows', 'recentUsers', 'latestBooks'
         ));
-    });
+    })->middleware(['auth']);
 
     // Manajemen Buku (Kecuali Delete)
     Route::get('/buku', [BookController::class, 'index'])->name('book.index');

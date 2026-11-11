@@ -224,18 +224,18 @@
                     <tbody>
                         @foreach ($borrows as $item)
                             @php
-                                // Logika Hitung Denda
                                 $denda = 0;
                                 $telat = 0;
                                 
-                                // Jika sudah dikembalikan, hitung selisih hari
                                 if ($item->status == 'dikembalikan' && $item->tanggal_dikembalikan) {
-                                    $tenggat = \Carbon\Carbon::parse($item->tanggal_kembali);
-                                    $aktual = \Carbon\Carbon::parse($item->tanggal_dikembalikan);
+                                    // Menggunakan strtotime() PHP murni
+                                    $tenggat = strtotime($item->tanggal_kembali);
+                                    $aktual = strtotime($item->tanggal_dikembalikan);
                                     
-                                    if ($aktual->greaterThan($tenggat)) {
-                                        $telat = $aktual->diffInDays($tenggat);
-                                        $denda = $telat * 1000; // Denda Rp 1.000 per hari
+                                    if ($aktual > $tenggat) {
+                                        $selisih_detik = $aktual - $tenggat;
+                                        $telat = floor($selisih_detik / 86400); // 86400 detik = 1 hari
+                                        $denda = $telat * 1000; // Denda Rp 1.000 / hari
                                     }
                                 }
                             @endphp
@@ -267,13 +267,32 @@
                                 </td>
                                 <td>
                                     @if($item->status == 'dipinjam')
-                                        <form action="{{ route('borrow.return', ['id' => $item->id]) }}" method="post" class="m-0">
-                                            @csrf
-                                            @method('put')
-                                            <button type="submit" class="btn btn-sm btn-outline-success fw-medium px-3 rounded-pill" onclick="return confirm('Tandai buku ini sudah dikembalikan?')">
-                                                Kembalikan
-                                            </button>
-                                        </form>
+                                        <!-- Tombol Pemicu Modal -->
+                                        <button type="button" class="btn btn-sm btn-outline-success fw-medium px-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#modalKembali{{ $item->id }}">
+                                            Kembalikan
+                                        </button>
+
+                                        <!-- Modal Konfirmasi Kembalikan -->
+                                        <div class="modal fade" id="modalKembali{{ $item->id }}" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-sm">
+                                                <div class="modal-content" style="border-radius: 16px; border: none;">
+                                                    <div class="modal-body text-center p-4">
+                                                        <div class="mb-3 text-warning">
+                                                            <i class="fas fa-exclamation-triangle fa-3x"></i>
+                                                        </div>
+                                                        <h5 class="fw-bold mb-2">Konfirmasi</h5>
+                                                        <p class="text-muted small mb-4">Apakah kamu yakin buku <strong>{{ $item->book->judul ?? 'ini' }}</strong> sudah dikembalikan?</p>
+                                                        
+                                                        <form action="{{ route('borrow.return', ['id' => $item->id]) }}" method="post" class="d-flex gap-2 justify-content-center">
+                                                            @csrf
+                                                            @method('put')
+                                                            <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
+                                                            <button type="submit" class="btn-brand px-4">Ya, Kembalikan</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     @else
                                         <span class="text-muted small"><i class="fas fa-check-circle text-success me-1"></i> Tuntas</span>
                                     @endif
@@ -300,7 +319,7 @@
                     url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
                 },
                 columnDefs: [
-                    { orderable: false, targets: [6] } // Kolom Aksi tidak bisa disortir
+                    { orderable: false, targets: [7] } // Kolom Aksi (indeks ke-7) tidak bisa disortir
                 ]
             });
         });

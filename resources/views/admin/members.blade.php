@@ -162,7 +162,9 @@
 
     <!-- Form Tambah Anggota -->
     <div class="card-custom mb-4">
-        <h4 class="fw-bold mb-4">Tambah Akun Baru</h4>
+        <h4 class="fw-bold mb-4">
+            {{ Auth::user()->role === 'admin' ? 'Tambah Akun Baru' : 'Tambah Member Baru' }}
+        </h4>
         <form action="{{ route('member.store') }}" method="post">
             @csrf
             <div class="row g-3">
@@ -182,7 +184,6 @@
                     <label class="form-label">Role</label>
                     <select name="role" class="form-select" required>
                         <option value="member">Member</option>
-                        {{-- HANYA TAMPILKAN OPSI INI JIKA YANG LOGIN ADALAH ADMIN --}}
                         @if(Auth::user()->role === 'admin')
                             <option value="pekerja">Pekerja</option>
                         @endif

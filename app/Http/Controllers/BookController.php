@@ -25,8 +25,9 @@ class BookController extends Controller
     /**
      * Menyimpan data buku baru ke database.
      */
-    public function store(Request $request)
+        public function store(Request $request)
     {
+        // PERBAIKAN: Gunakan koma (,) untuk memisahkan aturan unique
         $validated = $request->validate([
             'judul'        => 'required|min:3|unique:books,judul',
             'penulis'      => 'required|min:3',
@@ -37,7 +38,6 @@ class BookController extends Controller
             'cover'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        // Upload file cover jika ada
         if ($request->hasFile('cover')) {
             $coverPath = $request->file('cover')->store('covers', 'public');
             $validated['cover'] = $coverPath;
@@ -89,8 +89,9 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // PERBAIKAN: Gunakan koma (,) bukan titik dua (:) untuk memisahkan parameter unique
         $validated = $request->validate([
-            'judul'        => 'required|min:3:books,judul,' . $id,
+            'judul'        => 'required|min:3|unique:books,judul,' . $id,
             'penulis'      => 'required|min:3',
             'tahun_terbit' => 'required|numeric',
             'sinopsis'     => 'required|min:10|max:2400',
@@ -101,7 +102,7 @@ class BookController extends Controller
 
         $book = Book::findOrFail($id);
 
-        // Jika admin mengupload cover baru
+        // Jika user mengupload cover baru
         if ($request->hasFile('cover')) {
             // Hapus cover lama dari storage jika ada
             if ($book->cover) {

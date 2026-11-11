@@ -11,10 +11,19 @@ class MemberController extends Controller
     /**
      * Menampilkan daftar anggota (Member & Pekerja) di halaman Admin.
      */
-    public function index()
+        public function index()
     {
-        // Ambil user dengan role member dan pekerja, urutkan dari yang terbaru
-        $members = User::whereIn('role', ['member', 'pekerja'])->latest()->get();
+        // Cek siapa yang sedang login
+        $user = auth()->user();
+
+        // Jika yang login adalah Admin, tampilkan semua (Member & Pekerja)
+        if ($user->role === 'admin') {
+            $members = User::whereIn('role', ['member', 'pekerja'])->latest()->get();
+        } 
+        // Jika yang login adalah Pekerja, HANYA tampilkan Member
+        else {
+            $members = User::where('role', 'member')->latest()->get();
+        }
         
         return view('admin.members', compact('members'));
     }
@@ -46,7 +55,13 @@ class MemberController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        
         $member = User::findOrFail($id);
+
+        // CEGAH PEKERJA MENGEDIT SESAMA PEKERJA/ADMIN
+        if (auth()->user()->role === 'pekerja' && $member->role !== 'member') {
+            return back()->withErrors(['Akses Ditolak: Kamu tidak bisa mengedit akun pekerja/admin lain.']);
+        }
 
         $validated = $request->validate([
             'name'  => 'required|string|max:255',
@@ -72,8 +87,13 @@ class MemberController extends Controller
     public function destroy($id)
     {
         $member = User::findOrFail($id);
-        $member->delete();
         
+        // CEGAH PEKERJA MENGHAPUS SESAMA PEKERJA/ADMIN
+        if (auth()->user()->role === 'pekerja' && $member->role !== 'member') {
+            return back()->withErrors(['Akses Ditolak: Kamu tidak bisa menghapus akun pekerja/admin lain.']);
+        }
+
+        $member->delete();
         return redirect()->route('member.index')->with('success', 'Akun berhasil dihapus.');
     }
 }

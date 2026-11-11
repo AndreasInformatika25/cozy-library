@@ -16,11 +16,11 @@ Auth::routes();
 
 /*
 |--------------------------------------------------------------------------
-| RUTE PUBLIK & USER (Bisa diakses tanpa login)
+| RUTE PUBLIK (Bisa diakses tanpa login)
 |--------------------------------------------------------------------------
 */
 
-// Halaman Beranda (Home)
+// Halaman Beranda
 Route::get('/', function () {
     $semuaKategori = Category::with(['books' => function($q) {
         $q->latest()->take(7);
@@ -28,7 +28,6 @@ Route::get('/', function () {
 
     $semuaBuku = Book::with('category')->latest()->get();
 
-    // Statistik untuk Hero Section
     $totalBuku = Book::count();
     $totalKategori = Category::count();
     $totalUser = User::where('role', 'member')->count();
@@ -38,8 +37,13 @@ Route::get('/', function () {
     ));
 });
 
-// Detail Buku (Bisa dilihat siapa saja)
+// Detail Buku
 Route::get('/buku/{id}/detail', [BookController::class, 'show'])->name('book.detail');
+
+// Cara Pinjam
+Route::get('/cara-pinjam', function () {
+    return view('how-to-borrow');
+})->name('how.to.borrow');
 
 
 /*
@@ -48,23 +52,24 @@ Route::get('/buku/{id}/detail', [BookController::class, 'show'])->name('book.det
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
-    // Halaman /home (Bawaan Laravel, diarahkan ke HomeController)
+    // Halaman Home User
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    // Pinjam Buku (User)
+    // Pinjam Buku
     Route::post('/buku/{id}/pinjam', [BorrowController::class, 'pinjamUser'])->name('borrow.user');
 
-    // Riwayat Peminjaman (User)
+    // Riwayat Peminjaman
     Route::get('/riwayat-pinjam', [BorrowController::class, 'riwayat'])->name('borrow.history');
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| RUTE PEKERJA & ADMIN (Wajib Login & Role: pekerja / admin)
+| RUTE PEKERJA & ADMIN (Wajib Login & Role)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:pekerja,admin'])->group(function () {
+    
     // Dashboard Admin
     Route::get('/admin', function () {
         $totalBooks = Book::count();
@@ -74,29 +79,21 @@ Route::middleware(['auth', 'role:pekerja,admin'])->group(function () {
                                 ->whereYear('created_at', now()->year)
                                 ->count();
 
-        // 1. Ambil data peminjaman terbaru (Pisahkan variabelnya)
-        $recentBorrows = Borrow::with(['user', 'book'])
-                            ->latest()
-                            ->take(4)
-                            ->get();
-
-        // 2. Ambil data user terbaru (Pisahkan variabelnya)
+        $recentBorrows = Borrow::with(['user', 'book'])->latest()->take(4)->get();
         $recentUsers = User::latest()->take(4)->get();
-
         $latestBooks = Book::latest()->take(3)->get();
 
         return view('admin.dashboard', compact(
             'totalBooks', 'totalUsers', 'totalBorrowings', 'borrowThisMonth',
             'recentBorrows', 'recentUsers', 'latestBooks'
         ));
-    })->middleware(['auth']);
+    });
 
-    // Manajemen Buku (Kecuali Delete)
+    // Manajemen Buku
     Route::get('/buku', [BookController::class, 'index'])->name('book.index');
     Route::post('/buku', [BookController::class, 'store'])->name('book.store');
     Route::get('/buku/{id}/edit', [BookController::class, 'edit'])->name('book.edit');
     Route::put('/buku/{id}/edit', [BookController::class, 'update'])->name('book.update');
-    Route::delete('/buku/{id}/delete', [BookController::class, 'destroy'])->name('book.delete');
 
     // Manajemen Kategori
     Route::get('/kategori', [CategoryController::class, 'index'])->name('category.index');
@@ -109,8 +106,9 @@ Route::middleware(['auth', 'role:pekerja,admin'])->group(function () {
     Route::get('/peminjaman', [BorrowController::class, 'index'])->name('borrow.index');
     Route::post('/peminjaman', [BorrowController::class, 'store'])->name('borrow.store');
     Route::put('/peminjaman/{id}/kembali', [BorrowController::class, 'returnBook'])->name('borrow.return');
+    Route::delete('/buku/{id}/delete', [BookController::class, 'destroy'])->name('book.delete');
 
-    // Manajemen Anggota (Kecuali Delete)
+    // Manajemen Anggota (Kecuali Hapus)
     Route::get('/anggota', [MemberController::class, 'index'])->name('member.index');
     Route::post('/anggota', [MemberController::class, 'store'])->name('member.store');
     Route::put('/anggota/{id}/update', [MemberController::class, 'update'])->name('member.update');
@@ -126,7 +124,3 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // HANYA ADMIN yang bisa menghapus Anggota
     Route::delete('/anggota/{id}/delete', [MemberController::class, 'destroy'])->name('member.delete');
 });
-
-Route::get('/cara-pinjam', function () {
-    return view('how-to-borrow');
-})->name('how.to.borrow');

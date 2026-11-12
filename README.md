@@ -1,52 +1,82 @@
-# 📚 Cozy Library - Projek UTS Pemrograman Web Tingkat Mahir
+# Cozy Library - Sistem Informasi Perpustakaan 📚
 
-Aplikasi manajemen perpustakaan digital "Cozy Library" yang dibangun untuk memenuhi Projek Ujian Tengah Semester (UTS) mata kuliah Pemrograman Web Tingkat Mahir.
+**Oleh:** Andreas  
+**NIM:** 2411500750
 
-Aplikasi ini tidak hanya mengelola buku, tetapi juga memfasilitasi manajemen anggota, kategori, dan transaksi peminjaman lengkap dengan kalkulasi denda dan pemotongan stok otomatis.
+Proyek Aplikasi Web Tingkat Mahir (UTS) menggunakan framework Laravel. Aplikasi ini dirancang untuk mengelola sirkulasi perpustakaan secara digital dengan fitur manajemen buku, kategori, keanggotaan (berbasis _role_), serta sistem peminjaman dan pengembalian yang terintegrasi dengan kalkulasi denda otomatis.
+
+## 🚀 Fitur Utama
+
+- **Multi-Role Access:** Terdiri dari 3 hak akses (Admin, Pekerja, Member) menggunakan perlindungan Middleware.
+- **Sirkulasi Stok Otomatis:** Stok buku akan otomatis berkurang saat dipinjam dan bertambah saat dikembalikan.
+- **Manajemen Denda Keterlambatan:** Kalkulasi denda secara otomatis jika pengguna terlambat mengembalikan buku melewati batas waktu 7 hari.
+- **DataTables Integration:** Pencarian, _sorting_, _filtering_, dan _pagination_ yang cepat dan responsif pada panel admin.
+- **Keamanan Terjamin:** _Password hashing_ menggunakan Bcrypt secara _default_.
+
+## 🎥 Video Presentasi
+
+Penjelasan lengkap mengenai alur kerja aplikasi, logika fitur, dan demonstrasi _role_ dapat dilihat pada video presentasi berikut:  
+👉 [**Tonton Video Presentasi di YouTube**](https://youtu.be/v3Y6sx5K7JQ)
+
+## 📂 Berkas Penting (Dokumentasi & Database)
+
+Untuk memudahkan proses penilaian dan _deployment_, saya telah melampirkan berkas berikut di dalam _repository_ (pada _root folder_):
+
+- 📄 **Dokumentasi Lengkap (PDF):** `docs/Dokumentasi_UTS_Cozy_Library_Final.pdf` (Berisi ERD, penjelasan _role_, dan _screenshot_ antarmuka).
+- 💾 **Export Database (SQL):** `db_perpustakaan.sql` (File _raw database_ lengkap dengan data awal).
+
+## 🛠️ Instalasi & Persiapan
+
+Aplikasi ini menggunakan pendekatan ekspor/impor SQL murni untuk _database_-nya. Ikuti langkah-langkah berikut untuk menjalankan aplikasi di _local environment_ Anda:
+
+1. **Clone repository ini**
+
+    ```bash
+    git clone https://github.com/AndreasInformatika25/cozy-library.git
+    cd cozy-library
+    ```
+
+2. **Install dependencies**
+
+    ```bash
+    composer install
+    npm install && npm run build
+    ```
+
+3. **Konfigurasi Environment**
+    - Copy file `.env.example` menjadi `.env`
+    - Buka file `.env` dan sesuaikan koneksi database (buat nama database baru, misalnya `db_perpustakaan`).
+    - Generate _Application Key_:
+        ```bash
+        php artisan key:generate
+        ```
+
+4. **Konfigurasi Database (Import SQL)**
+   Karena proyek ini mengandalkan _raw SQL_, Anda **tidak perlu** menjalankan perintah `migrate`.
+    - Buka phpMyAdmin (atau _database client_ lainnya).
+    - Buat database baru sesuai dengan nama di file `.env` Anda.
+    - **Import** file `db_perpustakaan.sql` yang ada di _repository_ (berada di folder docs) ini ke dalam database tersebut.
+
+5. **Link Storage** _(Sangat penting untuk menampilkan gambar cover buku)_
+
+    ```bash
+    php artisan storage:link
+    ```
+
+6. **Jalankan Aplikasi**
+    ```bash
+    php artisan serve
+    ```
+    Aplikasi dapat diakses melalui `http://127.0.0.1:8000`
+
+## 👥 Akun Default (Testing)
+
+Setelah mengimpor database `.sql`, Anda dapat login menggunakan akun _testing_ berikut:
+
+- **Admin:** `admin@admin.com` | Password: `admin123`
+- **Pekerja:** `fiony@gmail.com` | Password: `fiony123`
+- **Member:** `windah@gmail.com` | Password: `123456789`
 
 ---
 
-## 👥 Tim Pengembang (Kelompok AF)
-
-- **[Andreas]** - 2411500750
-
----
-
-## 🛠️ Teknologi yang Digunakan
-
-- **Framework:** Laravel 13
-- **Database:** MariaDB
-- **Frontend:** HTML, CSS, Bootstrap 5, Blade Templating
-- **Library Tambahan:** DataTables (untuk _Search, Sort, Pagination_)
-
----
-
-## ✅ Kesesuaian dengan Spesifikasi Tugas UTS
-
-Aplikasi ini telah memenuhi dan melampaui seluruh kriteria yang disyaratkan pada dokumen spesifikasi tugas:
-
-1.  **Arsitektur MVC & Routing:** Dibangun dengan pemisahan _Model_, _View_, dan _Controller_ yang bersih.
-2.  **Blade Template & Component:** Antarmuka responsif dan konsisten menggunakan komponen Blade dan Bootstrap 5.
-3.  **Database & Relasi (Eloquent ORM):** Memiliki 4 tabel utama (`users`, `categories`, `books`, `borrows`) dengan menerapkan relasi _One-to-Many_ melalui _migration_ dan _seeder_.
-4.  **4 Modul CRUD & Validasi:** Meliputi manajemen Buku, Kategori, User (Anggota/Pekerja), dan Transaksi Peminjaman. Dilengkapi dengan _Form Request Validation_ yang ketat.
-5.  **Search, Filter, Sorting, Pagination:** Diimplementasikan secara penuh pada dashboard admin menggunakan DataTables.
-6.  **Authentication & Authorization:** Sistem _Login/Register_ yang terenkripsi (Hash). Memiliki 3 _Role_ pengguna (Admin, Pekerja, Member) dengan hak akses yang berbeda (melampaui syarat minimal 2 _role_).
-7.  **Protected Routes:** Menggunakan _Role Middleware_ untuk melindungi akses rute halaman admin agar tidak dapat diterobos oleh member biasa atau publik.
-
----
-
-## 🔐 Akun Default (Testing)
-
-Gunakan kredensial berikut untuk masuk sebagai Super Admin (berdasarkan seeder):
-
-- **Email:** `admin@gmail.com`
-- **Password:** `password`
-
----
-
-## 📎 Tautan Penting
-
-- **Video Presentasi (YouTube):**
-- **Dokumentasi Proyek (PDF):** Terdapat pada file di dalam repository ini.
-
-_Dibuat untuk memenuhi tugas UTS Pemrograman Web Tingkat Mahir._
+_Dibuat oleh Andreas (2411500750) untuk memenuhi tugas Ujian Tengah Semester (UTS) - Pemrograman Web Tingkat Mahir._

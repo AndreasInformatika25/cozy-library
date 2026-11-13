@@ -16,7 +16,7 @@ Proyek Aplikasi Web Tingkat Mahir (UTS) menggunakan framework Laravel. Aplikasi 
 ## 🎥 Video Presentasi
 
 Penjelasan lengkap mengenai alur kerja aplikasi, logika fitur, dan demonstrasi _role_ dapat dilihat pada video presentasi berikut:  
-👉 [**Tonton Video Presentasi di YouTube**](https://youtu.be/v3Y6sx5K7JQ)
+👉 [**Tonton Video Presentasi di YouTube**](https://youtu.be/AASrsIi57HU)
 
 ## 📂 Berkas Penting (Dokumentasi & Database)
 
